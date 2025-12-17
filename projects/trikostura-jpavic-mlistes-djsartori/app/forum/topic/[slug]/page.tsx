@@ -19,6 +19,7 @@ import { PollCreator } from '@/components/forum/poll-creator';
 import { TypingIndicator } from '@/components/forum/typing-indicator';
 import { getPollDetails } from '@/app/forum/polls/actions';
 import { TopicSidebar } from '@/components/forum/topic-sidebar';
+import { headers } from 'next/headers';
 
 // Revalidate every 2 minutes for better cache performance
 export const revalidate = 120;
@@ -163,9 +164,15 @@ export default async function TopicPage({
   const topicAttachments = allAttachments?.filter((a: any) => a.topic_id === topic.id) || [];
   const replyAttachments = allAttachments?.filter((a: any) => a.reply_id) || [];
 
-  // Record unique view (only counts once per user/session)
+  // Get IP address for view tracking
+  const headersList = await headers();
+  const ipAddress = headersList.get('x-forwarded-for')?.split(',')[0] || 
+                    headersList.get('x-real-ip') || 
+                    null;
+
+  // Record unique view with rate limiting (only counts once per hour per user/IP)
   // Non-blocking: page should load even if view tracking fails
-  recordTopicView(topic.id).catch(err => console.error('View tracking failed:', err));
+  recordTopicView(topic.id, ipAddress || undefined).catch(err => console.error('View tracking failed:', err));
 
   // Map attachments and reactions to replies
   const repliesWithAttachments = (replies || []).map((reply: any) => ({

@@ -1,0 +1,40 @@
+name: Database Monitoring & Alerts
+
+on:
+  schedule:
+    # Check health every hour
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  check-database-health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Database Health
+        id: health
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/rpc/get_category_stats" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n-1)
+          
+          echo "http_code=$HTTP_CODE" >> $GITHUB_OUTPUT
+          echo "response=$BODY" >> $GITHUB_OUTPUT
+
+      - name: Check if Healthy
+        if: steps.health.outputs.http_code != '200'
+        run: |
+          echo "::error::Database health check failed with status ${{ steps.health.outputs.http_code }}"
+          exit 1
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "Database health check failed. Manual intervention required."
+          # Add notification service here (e.g., Slack, Discord, Email)

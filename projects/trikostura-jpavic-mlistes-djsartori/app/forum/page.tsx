@@ -62,22 +62,26 @@ export default async function ForumPage({
 
   const supabase = await createServerSupabaseClient();
 
-  // Run all queries in parallel for better performance
+  // Run optimized queries in parallel
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
   const [
     { data: categories },
+    { data: categoryStats },
     { data: trendingTopics },
-    { data: recentTopics, count: totalTopics }
+    { data: recentTopicsData, count: totalTopics }
   ] = await Promise.all([
-    // Get categories
+    // Get categories (cached by Supabase)
     supabase
       .from('categories')
       .select('id, name, slug, description, icon, color, order_index')
       .order('order_index', { ascending: true }),
 
-    // Get trending topics (most views + replies in last 7 days) with all data
+    // Get category stats from optimized function
+    (supabase as any).rpc('get_category_stats'),
+
+    // Get trending topics with optimized index
     supabase
       .from('topics')
       .select(`
@@ -94,66 +98,40 @@ export default async function ForumPage({
       .order('view_count', { ascending: false })
       .limit(5),
 
-    // Get recent topics with all data in ONE query
-    supabase
-      .from('topics')
-      .select(`
-        id,
-        title,
-        slug,
-        created_at,
-        is_pinned,
-        is_locked,
-        has_solution,
-        view_count,
-        reply_count,
-        category_id,
-        author:profiles!topics_author_id_fkey(username, avatar_url),
-        category:categories(name, slug, color, icon)
-      `, { count: 'exact' })
-      .order('is_pinned', { ascending: false })
-      .order('created_at', { ascending: false })
-      .range(offset, offset + TOPICS_PER_PAGE - 1)
+    // Use optimized pagination function
+    (supabase as any).rpc('get_topics_paginated', {
+      p_limit: TOPICS_PER_PAGE,
+      p_offset: offset,
+      p_filter: currentFilter
+    })
   ]);
 
-  // Get category stats in one lightweight query (count only)
-  const { data: categoryTopicCounts } = await supabase
-    .from('topics')
-    .select('category_id')
-    .order('created_at', { ascending: false });
-
-  // Build maps for efficient lookup
-  const topicCountByCategory = new Map<string, number>();
-  const latestTopicByCategory = new Map<string, any>();
-
-  // Count topics per category
-  categoryTopicCounts?.forEach((topic: { category_id: string }) => {
-    topicCountByCategory.set(
-      topic.category_id,
-      (topicCountByCategory.get(topic.category_id) || 0) + 1
-    );
+  // Build category stats map
+  const categoryStatsMap = new Map();
+  categoryStats?.forEach((stat: any) => {
+    categoryStatsMap.set(stat.category_id, {
+      topic_count: stat.topic_count || 0,
+      latest_topic: stat.latest_topic_id ? {
+        id: stat.latest_topic_id,
+        slug: stat.latest_topic_slug,
+        title: stat.latest_topic_title,
+        created_at: stat.latest_topic_created_at,
+      } : null,
+    });
   });
 
-  // Find latest topic per category from recentTopics
-  recentTopics?.forEach((topic: any) => {
-    if (!latestTopicByCategory.has(topic.category_id)) {
-      latestTopicByCategory.set(topic.category_id, {
-        id: topic.id,
-        title: topic.title,
-        slug: topic.slug,
-        created_at: topic.created_at,
-        category_id: topic.category_id,
-        author: topic.author
-      });
-    }
+  // Combine category data with stats
+  const categoryData: CategoryWithStats[] = (categories as Category[] || []).map((category) => {
+    const stats = categoryStatsMap.get(category.id) || { topic_count: 0, latest_topic: null };
+    return {
+      ...category,
+      topic_count: stats.topic_count,
+      latest_topic: stats.latest_topic,
+    };
   });
 
-  // Combine category data with counts and latest topics
-  const categoryData: CategoryWithStats[] = (categories as Category[] || []).map((category) => ({
-    ...category,
-    topic_count: topicCountByCategory.get(category.id) || 0,
-    latest_topic: latestTopicByCategory.get(category.id) || null,
-  }));
+  // Recent topics data is already formatted from the function
+  const recentTopics = recentTopicsData || [];
 
   // Calculate solved and unsolved counts for client-side filtering
   const solvedCount = recentTopics?.filter((t: any) => t.has_solution === true).length || 0;
