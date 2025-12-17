@@ -121,22 +121,46 @@ export default async function LeaderboardPage() {
 
   userDatesMap.forEach((dates, userId) => {
     const sortedDates = Array.from(dates).sort().reverse();
-    let streak = 0;
+    let currentStreak = 0;
+    let maxStreak = 0;
+    let tempStreak = 0;
 
+    // Check for current active streak (from today or yesterday)
     for (let i = 0; i < sortedDates.length; i++) {
       const expectedDate = new Date(today);
       expectedDate.setDate(expectedDate.getDate() - i);
       const expectedDateStr = expectedDate.toISOString().split('T')[0];
 
       if (sortedDates[i] === expectedDateStr) {
-        streak++;
+        currentStreak++;
       } else {
         break;
       }
     }
 
-    if (streak > 0) {
-      streakMap.set(userId, streak);
+    // Find longest streak in the last 90 days
+    for (let i = 0; i < sortedDates.length; i++) {
+      if (i === 0) {
+        tempStreak = 1;
+      } else {
+        const prevDate = new Date(sortedDates[i - 1]);
+        const currDate = new Date(sortedDates[i]);
+        const diffDays = Math.floor((prevDate.getTime() - currDate.getTime()) / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+          tempStreak++;
+        } else {
+          maxStreak = Math.max(maxStreak, tempStreak);
+          tempStreak = 1;
+        }
+      }
+    }
+    maxStreak = Math.max(maxStreak, tempStreak);
+
+    // Use current streak if it's the longest, otherwise use max streak found
+    const bestStreak = Math.max(currentStreak, maxStreak);
+    if (bestStreak > 0) {
+      streakMap.set(userId, bestStreak);
     }
   });
 
