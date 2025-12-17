@@ -131,7 +131,18 @@ export default async function ForumPage({
   });
 
   // Recent topics data is already formatted from the function
-  const recentTopics = recentTopicsData || [];
+  const recentTopics = (recentTopicsData || []).map((topic: any) => ({
+    ...topic,
+    author: topic.author_username ? {
+      username: topic.author_username,
+      avatar_url: topic.author_avatar_url,
+    } : null,
+    category: topic.category_name ? {
+      name: topic.category_name,
+      slug: topic.category_slug,
+      color: topic.category_color,
+    } : null,
+  }));
 
   // Calculate solved and unsolved counts for client-side filtering
   const solvedCount = recentTopics?.filter((t: any) => t.has_solution === true).length || 0;
