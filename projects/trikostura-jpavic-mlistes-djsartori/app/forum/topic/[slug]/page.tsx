@@ -18,7 +18,6 @@ import { PollWidget } from '@/components/forum/poll-widget';
 import { PollCreator } from '@/components/forum/poll-creator';
 import { TypingIndicator } from '@/components/forum/typing-indicator';
 import { getPollDetails } from '@/app/forum/polls/actions';
-import { TopicSidebar } from '@/components/forum/topic-sidebar';
 import { headers } from 'next/headers';
 
 // Revalidate every 2 minutes for better cache performance
@@ -240,33 +239,6 @@ export default async function TopicPage({
   // Check if topic has a solution
   const hasSolution = replies?.some((r: any) => r.is_solution);
 
-  // Fetch related topics from same category (for sidebar)
-  const { data: relatedTopics } = await supabase
-    .from('topics')
-    .select('id, title, slug, reply_count, view_count, created_at')
-    .eq('category_id', topic.category_id)
-    .neq('id', topic.id)
-    .order('created_at', { ascending: false })
-    .limit(5);
-
-  // Get category stats for sidebar
-  const [{ count: totalTopics }, { count: totalReplies }] = await Promise.all([
-    supabase
-      .from('topics')
-      .select('id', { count: 'exact', head: true })
-      .eq('category_id', topic.category_id),
-    supabase
-      .from('replies')
-      .select('id', { count: 'exact', head: true })
-      .in('topic_id', [topic.id])
-  ]);
-
-  const categoryStats = {
-    totalTopics: totalTopics || 0,
-    totalReplies: totalReplies || 0,
-    activeUsers: replies?.length || 0,
-  };
-
   return (
     <div className="space-y-4 sm:space-y-5">
       {/* Breadcrumb Navigation */}
@@ -291,8 +263,7 @@ export default async function TopicPage({
         )}
       </div>
 
-      <div className="flex gap-6 xl:gap-8">
-        <div className="flex-1 min-w-0 space-y-4 sm:space-y-5">
+      <div className="max-w-5xl mx-auto space-y-4 sm:space-y-5">
           <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-md hover:shadow-lg transition-all duration-300">
         <CardContent className="p-3 sm:p-5 md:p-6 lg:p-7">
           <div className="flex items-center justify-between mb-4 sm:mb-5">
@@ -492,13 +463,6 @@ export default async function TopicPage({
           </CardContent>
         </Card>
       )}
-        </div>
-
-        <TopicSidebar
-          category={topic.category!}
-          relatedTopics={relatedTopics || []}
-          stats={categoryStats}
-        />
       </div>
     </div>
   );
