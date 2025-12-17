@@ -139,24 +139,24 @@ export default async function LeaderboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 xl:gap-8">
         {/* All Time Leaders */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-yellow-600" />
-              Svih vremena
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 flex-shrink-0" />
+              <span className="truncate">Svih vremena</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <CardContent className="pt-0">
+            <div className="space-y-2 sm:space-y-3">
               {topAllTime?.map((user, index) => (
                 <Link
                   key={user.id}
                   href={`/forum/user/${user.username}`}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
-                  <div className={`text-lg font-bold w-6 ${
+                  <div className={`text-base sm:text-lg font-bold w-5 sm:w-6 flex-shrink-0 ${
                     index === 0 ? 'text-yellow-500' :
                     index === 1 ? 'text-gray-400' :
                     index === 2 ? 'text-orange-600' :
@@ -169,13 +169,14 @@ export default async function LeaderboardPage() {
                     alt={user.username}
                     username={user.username}
                     size="sm"
+                    className="flex-shrink-0"
                   />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold truncate">{user.username}</div>
-                    <div className="text-sm text-gray-500">{user.reputation} RP</div>
+                  <div className="flex-1 min-w-0 overflow-hidden">
+                    <div className="font-semibold truncate text-sm sm:text-base">{user.username}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">{user.reputation} RP</div>
                   </div>
                   {index < 3 && (
-                    <Award className={`w-5 h-5 ${
+                    <Award className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 ${
                       index === 0 ? 'text-yellow-500' :
                       index === 1 ? 'text-gray-400' :
                       'text-orange-600'
@@ -189,21 +190,21 @@ export default async function LeaderboardPage() {
 
         {/* Most Active This Month */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
-              Ovaj mjesec
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0" />
+              <span className="truncate">Ovaj mjesec</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <CardContent className="pt-0">
+            <div className="space-y-2 sm:space-y-3">
               {topActive?.map((user, index) => (
                 <Link
                   key={user.id}
                   href={`/forum/user/${user.username}`}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
-                  <div className="text-lg font-bold w-6 text-gray-500">
+                  <div className="text-base sm:text-lg font-bold w-5 sm:w-6 flex-shrink-0 text-gray-500">
                     {index + 1}
                   </div>
                   <Avatar
@@ -211,12 +212,13 @@ export default async function LeaderboardPage() {
                     alt={user.username}
                     username={user.username}
                     size="sm"
+                    className="flex-shrink-0"
                   />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold truncate">{user.username}</div>
-                    <div className="text-sm text-gray-500">{user.activityCount} aktivnosti</div>
+                  <div className="flex-1 min-w-0 overflow-hidden">
+                    <div className="font-semibold truncate text-sm sm:text-base">{user.username}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">{user.activityCount} aktivnosti</div>
                   </div>
-                  {index === 0 && <Star className="w-5 h-5 text-blue-600" />}
+                  {index === 0 && <Star className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-blue-600" />}
                 </Link>
               ))}
             </div>
@@ -225,21 +227,21 @@ export default async function LeaderboardPage() {
 
         {/* Longest Streaks */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Flame className="w-5 h-5 text-orange-600" />
-              Najduži nizovi
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 flex-shrink-0" />
+              <span className="truncate">Najduži nizovi</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <CardContent className="pt-0">
+            <div className="space-y-2 sm:space-y-3">
               {topStreaks?.map((user, index) => (
                 <Link
                   key={user.id}
                   href={`/forum/user/${user.username}`}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
-                  <div className="text-lg font-bold w-6 text-gray-500">
+                  <div className="text-base sm:text-lg font-bold w-5 sm:w-6 flex-shrink-0 text-gray-500">
                     {index + 1}
                   </div>
                   <Avatar
@@ -247,12 +249,13 @@ export default async function LeaderboardPage() {
                     alt={user.username}
                     username={user.username}
                     size="sm"
+                    className="flex-shrink-0"
                   />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold truncate">{user.username}</div>
-                    <div className="text-sm text-gray-500">{user.streak} dana</div>
+                  <div className="flex-1 min-w-0 overflow-hidden">
+                    <div className="font-semibold truncate text-sm sm:text-base">{user.username}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">{user.streak} dana</div>
                   </div>
-                  {index === 0 && <Flame className="w-5 h-5 text-orange-600" />}
+                  {index === 0 && <Flame className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-orange-600" />}
                 </Link>
               ))}
             </div>
