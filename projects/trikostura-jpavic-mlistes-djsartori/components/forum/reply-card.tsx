@@ -324,8 +324,8 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
 
   return (
     <Card id={`reply-${reply.id}`} className={`border-2 shadow-md hover:shadow-lg transition-all duration-300 ${isSolution ? 'border-green-300 dark:border-green-800 bg-green-50/30 dark:bg-green-900/10' : 'border-gray-200 dark:border-gray-700'}`}>
-      <CardContent className="p-3 sm:p-6">
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+      <CardContent className="p-2.5 sm:p-5">
+        <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3.5">
           {/* Mobile: Horizontal voting bar */}
           <div className="flex sm:hidden items-center gap-3 pb-3 border-b border-gray-200 dark:border-gray-800">
             <Button
@@ -333,14 +333,14 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
               size="sm"
               onClick={() => handleVote(1)}
               disabled={!isLoggedIn || isVoting}
-              className={`h-8 px-3 transition-all ${
+              className={`h-10 px-3 transition-all ${
                 currentVote === 1 ? 'scale-110 shadow-md' : ''
               } ${isVoting ? 'opacity-50 cursor-wait' : ''} ${
                 !isLoggedIn ? 'cursor-not-allowed' : 'hover:scale-105'
               } ${upvoteAnimation}`}
               title={!isLoggedIn ? 'Prijavite se da biste glasali' : 'Sviđa mi se'}
             >
-              <ThumbsUp className={`w-3.5 h-3.5 mr-1 ${isVoting ? 'animate-pulse' : ''}`} />
+              <ThumbsUp className={`w-4 h-4 mr-1 ${isVoting ? 'animate-pulse' : ''}`} />
               <span className="text-sm">{upvotes}</span>
             </Button>
             <span className="text-base font-semibold bg-gradient-to-br from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
@@ -351,14 +351,14 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
               size="sm"
               onClick={() => handleVote(-1)}
               disabled={!isLoggedIn || isVoting}
-              className={`h-8 px-3 transition-all ${
+              className={`h-10 px-3 transition-all ${
                 currentVote === -1 ? 'scale-110 shadow-md' : ''
               } ${isVoting ? 'opacity-50 cursor-wait' : ''} ${
                 !isLoggedIn ? 'cursor-not-allowed' : 'hover:scale-105'
               } ${downvoteAnimation}`}
               title={!isLoggedIn ? 'Prijavite se da biste glasali' : 'Ne sviđa mi se'}
             >
-              <ThumbsDown className={`w-3.5 h-3.5 mr-1 ${isVoting ? 'animate-pulse' : ''}`} />
+              <ThumbsDown className={`w-4 h-4 mr-1 ${isVoting ? 'animate-pulse' : ''}`} />
               <span className="text-sm">{downvotes}</span>
             </Button>
           </div>
@@ -403,7 +403,7 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between mb-3 sm:mb-4 gap-2 p-3 bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-800/50 dark:to-transparent rounded-lg border-l-4 border-blue-500">
+            <div className="flex items-start justify-between mb-2.5 sm:mb-3 gap-2 p-2.5 sm:p-3 bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-800/50 dark:to-transparent rounded-lg border-l-4 border-blue-500">
               <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                 <Link href={`/forum/user/${reply.author?.username}`} className="flex-shrink-0 transition-transform hover:scale-110">
                   <Avatar
@@ -550,7 +550,7 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
             <AdvancedAttachmentList attachments={reply.attachments || []} />
 
             {/* Reaction Picker */}
-            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-2.5 pt-2.5 border-t border-gray-200 dark:border-gray-700">
               <ReactionPicker
                 replyId={reply.id}
                 reactions={reply.reactions || []}

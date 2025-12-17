@@ -233,9 +233,9 @@ export default async function TopicPage({
   const hasSolution = replies?.some((r: any) => r.is_solution);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-5">
       {/* Breadcrumb Navigation */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Breadcrumb
           items={[
             { label: 'Forum', href: '/forum' },
@@ -257,8 +257,8 @@ export default async function TopicPage({
       </div>
 
       <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-md hover:shadow-lg transition-all duration-300">
-        <CardContent className="p-6 sm:p-8">
-          <div className="flex items-center justify-between mb-6">
+        <CardContent className="p-3 sm:p-5 md:p-6 lg:p-7">
+          <div className="flex items-center justify-between mb-4 sm:mb-5">
             <div className="flex items-center gap-2 flex-wrap">
               <span
                 className="px-4 py-1.5 text-sm font-bold rounded-full shadow-sm ring-1 ring-black/5 dark:ring-white/10 transition-transform hover:scale-105"
@@ -308,9 +308,9 @@ export default async function TopicPage({
             />
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent leading-tight break-words">{topic.title}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-extrabold mb-4 sm:mb-5 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent leading-tight break-words">{topic.title}</h1>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-900/30 rounded-xl border border-gray-200 dark:border-gray-700 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-900/30 rounded-xl border border-gray-200 dark:border-gray-700 mb-4 sm:mb-5">
             <div className="flex items-center gap-4">
               <Link href={`/forum/user/${topic.author?.username}`} className="flex-shrink-0 transition-transform hover:scale-110">
                 <Avatar

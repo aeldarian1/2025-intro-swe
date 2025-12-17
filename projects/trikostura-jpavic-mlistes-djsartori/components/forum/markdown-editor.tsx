@@ -112,8 +112,8 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           required={required}
-          rows={rows}
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white resize-y font-mono text-sm"
+          rows={4}
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white resize-y font-mono text-sm min-h-[120px] sm:min-h-[150px] md:min-h-[180px] max-h-[300px] sm:max-h-[500px]"
         />
       ) : (
         <div className="min-h-[150px] px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">

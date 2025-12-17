@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { PerformanceMonitor } from "@/components/performance-monitor";
+import { InstallPrompt } from "@/components/ui/install-prompt";
 import "./globals.css";
 
 const inter = Inter({
@@ -43,6 +44,16 @@ export const metadata: Metadata = {
     title: "Skripta",
     statusBarStyle: "default",
   },
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -61,6 +72,7 @@ export default function RootLayout({
         >
           <PerformanceMonitor />
           {children}
+          <InstallPrompt />
           <Toaster position="top-right" richColors closeButton />
           <Analytics />
           <SpeedInsights />

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, Home, Search, Settings, User, LogOut, Plus, Users, Bookmark, Mail, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,8 +16,52 @@ interface MobileNavProps {
 
 export function MobileNav({ user, profile }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const startXRef = useRef<number>(0);
+  const currentXRef = useRef<number>(0);
 
   const closeMenu = () => setIsOpen(false);
+
+  // Swipe to close gesture
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel || !isOpen) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startXRef.current = e.touches[0].clientX;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      currentXRef.current = e.touches[0].clientX;
+      const diff = currentXRef.current - startXRef.current;
+
+      if (diff > 0) {
+        panel.style.transform = `translateX(${diff}px)`;
+      }
+    };
+
+    const handleTouchEnd = () => {
+      const diff = currentXRef.current - startXRef.current;
+
+      if (diff > 100) {
+        closeMenu();
+      }
+
+      panel.style.transform = '';
+      startXRef.current = 0;
+      currentXRef.current = 0;
+    };
+
+    panel.addEventListener('touchstart', handleTouchStart);
+    panel.addEventListener('touchmove', handleTouchMove);
+    panel.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      panel.removeEventListener('touchstart', handleTouchStart);
+      panel.removeEventListener('touchmove', handleTouchMove);
+      panel.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isOpen]);
 
   return (
     <>
@@ -37,12 +81,15 @@ export function MobileNav({ user, profile }: MobileNavProps) {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/50 z-40"
+            className="fixed inset-0 bg-black/50 z-40 transition-opacity duration-200 animate-fade-in"
             onClick={closeMenu}
           />
 
           {/* Menu Panel */}
-          <div className="fixed top-14 right-0 w-64 h-[calc(100vh-3.5rem)] bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 z-50 overflow-y-auto">
+          <div
+            ref={panelRef}
+            className="fixed top-14 right-0 w-64 h-[calc(100vh-3.5rem)] bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 z-50 overflow-y-auto transition-transform duration-300 ease-out animate-slide-in-right"
+          >
             <div className="p-4 space-y-4">
               {user && profile ? (
                 <>
@@ -72,6 +119,9 @@ export function MobileNav({ user, profile }: MobileNavProps) {
 
                   {/* Navigation Links */}
                   <div className="space-y-1">
+                    <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-3 py-2">
+                      Navigacija
+                    </div>
                     <Link
                       href="/forum/new"
                       onClick={closeMenu}

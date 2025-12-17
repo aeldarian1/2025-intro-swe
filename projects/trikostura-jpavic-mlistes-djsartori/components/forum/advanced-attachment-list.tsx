@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Download, X, Play, FileText, Image as ImageIcon, Film, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ImageLightbox } from './image-lightbox';
@@ -84,11 +85,12 @@ export function AdvancedAttachmentList({
                 className="relative group aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-all"
                 onClick={() => openLightbox(index)}
               >
-                <img
+                <Image
                   src={attachment.file_url}
                   alt={attachment.file_name}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white">

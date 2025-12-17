@@ -162,6 +162,11 @@ export default async function CategoryPage({
                         <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4" />
                         {topic.reply_count}
                       </span>
+                      <span className="sm:hidden">
+                        {Math.floor((Date.now() - new Date(topic.created_at).getTime()) / (1000 * 60 * 60)) < 24
+                          ? `${Math.floor((Date.now() - new Date(topic.created_at).getTime()) / (1000 * 60 * 60))}h`
+                          : `${Math.floor((Date.now() - new Date(topic.created_at).getTime()) / (1000 * 60 * 60 * 24))}d`}
+                      </span>
                       <span className="hidden sm:inline">
                         {new Date(topic.created_at).toLocaleDateString('hr-HR')}
                       </span>

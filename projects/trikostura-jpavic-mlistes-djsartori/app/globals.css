@@ -44,30 +44,30 @@
   .dark {
     --background: 222.2 47% 11%;
     --foreground: 210 40% 98%;
-    --card: 217 33% 17%;
+    --card: 217 25% 20%;
     --card-foreground: 210 40% 98%;
-    --popover: 217 33% 17%;
+    --popover: 217 25% 20%;
     --popover-foreground: 210 40% 98%;
-    --primary: 355 87% 60%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217 33% 17%;
+    --primary: 355 87% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 25% 22%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 33% 17%;
+    --muted: 217 25% 20%;
+    --muted-foreground: 215 20% 70%;
+    --accent: 217 25% 22%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 355 87% 60%;
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 217 25% 28%;
+    --input: 217 25% 22%;
+    --ring: 355 87% 65%;
 
-    /* Student-friendly vibrant colors for dark mode */
-    --primary-blue: 217 91% 65%;
-    --success: 142 76% 45%;
-    --warning: 33 100% 55%;
-    --info: 199 89% 53%;
-    --purple: 271 81% 61%;
+    /* Student-friendly vibrant colors for dark mode - improved contrast */
+    --primary-blue: 217 91% 68%;
+    --success: 142 76% 48%;
+    --warning: 33 100% 58%;
+    --info: 199 89% 56%;
+    --purple: 271 81% 64%;
   }
 }
 
@@ -77,13 +77,13 @@
     @apply bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--gradient-from))] to-[hsl(var(--gradient-to))];
   }
 
-  /* Glassmorphism effect */
+  /* Glassmorphism effect - improved contrast for dark mode */
   .glass {
-    @apply backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-gray-700/30;
+    @apply backdrop-blur-md bg-white/80 dark:bg-gray-800/85 border border-white/20 dark:border-gray-600/40;
   }
 
   .glass-card {
-    @apply backdrop-blur-xl bg-white/90 dark:bg-gray-800/90 border border-white/30 dark:border-gray-700/40 shadow-2xl;
+    @apply backdrop-blur-xl bg-white/90 dark:bg-gray-800/95 border border-white/30 dark:border-gray-600/50 shadow-2xl;
   }
 
   /* Hover lift effect */
@@ -159,6 +159,33 @@
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Improved typography for mobile */
+  h1, h2, h3, h4, h5, h6 {
+    @apply leading-tight sm:leading-snug;
+  }
+
+  p, li, span {
+    @apply leading-relaxed;
+  }
+
+  /* Prevent text overflow */
+  p, span, div {
+    @apply break-words;
+    overflow-wrap: anywhere;
+  }
+
+  /* Responsive font scaling */
+  html {
+    font-size: 16px;
+  }
+
+  @media (max-width: 640px) {
+    html {
+      font-size: 15px;
+    }
   }
 
   /* Improved keyboard focus indicators for accessibility */

@@ -37,13 +37,13 @@ export default function Home() {
               <Sparkles className="w-4 h-4" />
               Najbolja studentska zajednica u Hrvatskoj
             </div>
-            <h1 className="text-6xl md:text-8xl font-bold text-gradient animate-slide-up">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-gradient animate-slide-up">
               Skripta
             </h1>
-            <p className="text-2xl md:text-3xl text-gray-700 dark:text-gray-300 font-semibold animate-slide-up">
+            <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl text-gray-700 dark:text-gray-300 font-semibold animate-slide-up">
               Tvoja Digitalna Skripta
             </p>
-            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto animate-slide-up">
+            <p className="text-base sm:text-lg md:text-lg lg:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto animate-slide-up">
               Spoji se s kolegama, dijeli znanje, pronađi odgovore na pitanja iz faksa.
               Zajednica hrvatskih studenata na jednom mjestu.
             </p>
@@ -61,7 +61,7 @@ export default function Home() {
           </div>
 
           {/* Stats */}
-          <div className="pt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="pt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300" />
               <div className="relative bg-white dark:bg-gray-800 p-8 rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all">
