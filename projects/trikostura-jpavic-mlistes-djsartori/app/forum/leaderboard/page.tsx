@@ -20,36 +20,59 @@ export default async function LeaderboardPage() {
   firstDayOfMonth.setDate(1);
   firstDayOfMonth.setHours(0, 0, 0, 0);
 
+  // Get last 90 days for activity tracking
+  const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+
   // PARALLEL QUERIES: Fetch all data at once
   const [
     { data: topAllTimeData },
-    { data: activityThisMonth },
-    { data: recentActivity }
+    { data: topicsThisMonth },
+    { data: repliesThisMonth },
+    { data: recentTopics },
+    { data: recentReplies }
   ] = await Promise.all([
     supabase
       .from('profiles')
       .select('id, username, avatar_url, reputation')
       .order('reputation', { ascending: false })
       .limit(10),
+    // Topics this month
     supabase
-      .from('user_activity')
-      .select('user_id, topics_count, replies_count')
-      .gte('activity_date', firstDayOfMonth.toISOString().split('T')[0]),
-    // Only get last 90 days of activity for streak calculation (not ALL activity)
+      .from('topics')
+      .select('author_id, created_at')
+      .gte('created_at', firstDayOfMonth.toISOString()),
+    // Replies this month
     supabase
-      .from('user_activity')
-      .select('user_id, activity_date')
-      .gte('activity_date', new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
-      .order('activity_date', { ascending: false })
+      .from('replies')
+      .select('author_id, created_at')
+      .gte('created_at', firstDayOfMonth.toISOString()),
+    // Recent topics (last 90 days)
+    supabase
+      .from('topics')
+      .select('author_id, created_at')
+      .gte('created_at', ninetyDaysAgo.toISOString())
+      .order('created_at', { ascending: false }),
+    // Recent replies (last 90 days)
+    supabase
+      .from('replies')
+      .select('author_id, created_at')
+      .gte('created_at', ninetyDaysAgo.toISOString())
+      .order('created_at', { ascending: false })
   ]);
 
   const topAllTime: any[] = topAllTimeData || [];
 
-  // Aggregate activity by user
+  // Aggregate activity by user for this month
   const userActivityMap = new Map<string, number>();
-  activityThisMonth?.forEach((activity: any) => {
-    const current = userActivityMap.get(activity.user_id) || 0;
-    userActivityMap.set(activity.user_id, current + activity.topics_count + activity.replies_count);
+
+  topicsThisMonth?.forEach((topic: any) => {
+    const current = userActivityMap.get(topic.author_id) || 0;
+    userActivityMap.set(topic.author_id, current + 1);
+  });
+
+  repliesThisMonth?.forEach((reply: any) => {
+    const current = userActivityMap.get(reply.author_id) || 0;
+    userActivityMap.set(reply.author_id, current + 1);
   });
 
   // Get profiles for top active users
@@ -70,15 +93,26 @@ export default async function LeaderboardPage() {
     activityCount: userActivityMap.get(profile.id) || 0,
   })).sort((a, b) => b.activityCount - a.activityCount);
 
-  // Calculate streaks (using only last 90 days instead of all activity)
+  // Calculate streaks from topics and replies (last 90 days)
   const streakMap = new Map<string, number>();
   const userDatesMap = new Map<string, Set<string>>();
 
-  recentActivity?.forEach((activity: any) => {
-    if (!userDatesMap.has(activity.user_id)) {
-      userDatesMap.set(activity.user_id, new Set());
+  // Collect activity dates from topics
+  recentTopics?.forEach((topic: any) => {
+    if (!userDatesMap.has(topic.author_id)) {
+      userDatesMap.set(topic.author_id, new Set());
     }
-    userDatesMap.get(activity.user_id)!.add(activity.activity_date);
+    const date = new Date(topic.created_at).toISOString().split('T')[0];
+    userDatesMap.get(topic.author_id)!.add(date);
+  });
+
+  // Collect activity dates from replies
+  recentReplies?.forEach((reply: any) => {
+    if (!userDatesMap.has(reply.author_id)) {
+      userDatesMap.set(reply.author_id, new Set());
+    }
+    const date = new Date(reply.created_at).toISOString().split('T')[0];
+    userDatesMap.get(reply.author_id)!.add(date);
   });
 
   // Calculate current streak for each user
@@ -124,7 +158,7 @@ export default async function LeaderboardPage() {
   })).sort((a, b) => b.streak - a.streak);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 px-3 sm:px-4 pb-8">
+    <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto space-y-6 px-3 sm:px-4 lg:px-6 pb-8">
       <Breadcrumb
         items={[
           { label: 'Forum', href: '/forum' },
@@ -139,7 +173,7 @@ export default async function LeaderboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 xl:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
         {/* All Time Leaders */}
         <Card>
           <CardHeader className="pb-3">
