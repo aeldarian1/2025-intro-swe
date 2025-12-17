@@ -115,52 +115,37 @@ export default async function LeaderboardPage() {
     userDatesMap.get(reply.author_id)!.add(date);
   });
 
-  // Calculate current streak for each user
+  // Calculate streaks for each user
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   userDatesMap.forEach((dates, userId) => {
     const sortedDates = Array.from(dates).sort().reverse();
-    let currentStreak = 0;
-    let maxStreak = 0;
-    let tempStreak = 0;
+    
+    if (sortedDates.length === 0) return;
 
-    // Check for current active streak (from today or yesterday)
-    for (let i = 0; i < sortedDates.length; i++) {
-      const expectedDate = new Date(today);
-      expectedDate.setDate(expectedDate.getDate() - i);
-      const expectedDateStr = expectedDate.toISOString().split('T')[0];
+    let maxStreak = 1;
+    let currentStreakLength = 1;
 
-      if (sortedDates[i] === expectedDateStr) {
-        currentStreak++;
+    // Calculate longest consecutive streak
+    for (let i = 0; i < sortedDates.length - 1; i++) {
+      const currentDate = new Date(sortedDates[i]);
+      const nextDate = new Date(sortedDates[i + 1]);
+      const diffDays = Math.floor((currentDate.getTime() - nextDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        // Consecutive days
+        currentStreakLength++;
+        maxStreak = Math.max(maxStreak, currentStreakLength);
       } else {
-        break;
+        // Streak broken
+        currentStreakLength = 1;
       }
     }
 
-    // Find longest streak in the last 90 days
-    for (let i = 0; i < sortedDates.length; i++) {
-      if (i === 0) {
-        tempStreak = 1;
-      } else {
-        const prevDate = new Date(sortedDates[i - 1]);
-        const currDate = new Date(sortedDates[i]);
-        const diffDays = Math.floor((prevDate.getTime() - currDate.getTime()) / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) {
-          tempStreak++;
-        } else {
-          maxStreak = Math.max(maxStreak, tempStreak);
-          tempStreak = 1;
-        }
-      }
-    }
-    maxStreak = Math.max(maxStreak, tempStreak);
-
-    // Use current streak if it's the longest, otherwise use max streak found
-    const bestStreak = Math.max(currentStreak, maxStreak);
-    if (bestStreak > 0) {
-      streakMap.set(userId, bestStreak);
+    // Only add users with streaks of 2+ days
+    if (maxStreak >= 2) {
+      streakMap.set(userId, maxStreak);
     }
   });
 
