@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from './card';
 
 interface ShortcutConfig {
   key: string;
-  altKey?: string; // Alternative key
   description: string;
   action: () => void;
 }
@@ -74,10 +73,10 @@ export function KeyboardShortcuts() {
   const shortcuts: ShortcutConfig[] = [
     { key: '?', description: 'Prikaži tipkovničke prečace', action: () => setShowModal(true) },
     { key: '/', description: 'Pretraži forum', action: () => router.push('/forum/search') },
-    { key: 'n', altKey: '1', description: 'Nova tema', action: () => router.push('/forum/new') },
-    { key: 'h', altKey: '2', description: 'Početna stranica foruma', action: () => router.push('/forum') },
-    { key: 'u', altKey: '3', description: 'Korisnici', action: () => router.push('/forum/users') },
-    { key: 'l', altKey: '4', description: 'Ljestvica', action: () => router.push('/forum/leaderboard') },
+    { key: '1', description: 'Nova tema', action: () => router.push('/forum/new') },
+    { key: '2', description: 'Početna stranica foruma', action: () => router.push('/forum') },
+    { key: '3', description: 'Korisnici', action: () => router.push('/forum/users') },
+    { key: '4', description: 'Ljestvica', action: () => router.push('/forum/leaderboard') },
     { key: 'Esc', description: 'Zatvori modal/dijalog', action: () => {} },
   ];
 
@@ -132,19 +131,9 @@ export function KeyboardShortcuts() {
                 <span className="text-sm text-gray-900 dark:text-white text-left">
                   {shortcut.description}
                 </span>
-                <div className="flex items-center gap-2">
-                  <kbd className="px-3 py-1.5 text-sm font-semibold text-gray-900 dark:text-white bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded shadow-sm font-mono">
-                    {shortcut.key}
-                  </kbd>
-                  {shortcut.altKey && (
-                    <>
-                      <span className="text-xs text-gray-400">ili</span>
-                      <kbd className="px-3 py-1.5 text-sm font-semibold text-gray-900 dark:text-white bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded shadow-sm font-mono">
-                        {shortcut.altKey}
-                      </kbd>
-                    </>
-                  )}
-                </div>
+                <kbd className="px-3 py-1.5 text-sm font-semibold text-gray-900 dark:text-white bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded shadow-sm font-mono">
+                  {shortcut.key}
+                </kbd>
               </button>
             ))}
           </div>
