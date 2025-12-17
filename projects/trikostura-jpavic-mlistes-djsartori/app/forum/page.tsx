@@ -172,10 +172,10 @@ export default async function ForumPage({
         </div>
       </div>
 
-      <div className="grid gap-2 sm:gap-3">
+      <div className="grid gap-2 sm:gap-3 md:grid-cols-2 lg:grid-cols-3 xl:gap-4">
         {categoryData.map((category) => (
           <Card key={category.id} className="hover-lift cursor-pointer border-gray-200 dark:border-gray-700">
-            <CardContent className="p-3 sm:p-4 md:p-5">
+            <CardContent className="p-3 sm:p-4 md:p-5 lg:p-6">
               <div className="flex items-start gap-3 sm:gap-4">
                 <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
                   <div
@@ -231,8 +231,8 @@ export default async function ForumPage({
             <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Popularno</h2>
           </div>
-          <div className="grid gap-2 sm:gap-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-            {(trendingTopics as unknown as TopicWithCategoryAndAuthor[])?.slice(0, 3).map((topic, index) => (
+          <div className="grid gap-2 sm:gap-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-4">
+            {(trendingTopics as unknown as TopicWithCategoryAndAuthor[])?.slice(0, 4).map((topic, index) => (
               <Card key={topic.id} className="hover-lift cursor-pointer border-gray-200 dark:border-gray-700 bg-gradient-to-br from-orange-50 to-white dark:from-orange-900/10 dark:to-gray-800">
                 <CardContent className="p-2.5 sm:p-3.5">
                   <div className="flex items-start gap-3">

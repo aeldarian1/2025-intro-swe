@@ -133,13 +133,13 @@ export default async function LeaderboardPage() {
       />
 
       <div>
-        <h1 className="text-3xl font-bold mb-2">Ljestvica</h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <h1 className="text-3xl font-bold mb-2 xl:text-4xl">Ljestvica</h1>
+        <p className="text-gray-600 dark:text-gray-400 xl:text-lg">
           Najbolji doprinositelji zajednice
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8">
         {/* All Time Leaders */}
         <Card>
           <CardHeader>

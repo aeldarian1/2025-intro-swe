@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { PerformanceMonitor } from "@/components/performance-monitor";
 import { InstallPrompt } from "@/components/ui/install-prompt";
+import { KeyboardShortcuts } from "@/components/ui/keyboard-shortcuts";
 import "./globals.css";
 
 const inter = Inter({
@@ -73,6 +74,7 @@ export default function RootLayout({
           <PerformanceMonitor />
           {children}
           <InstallPrompt />
+          <KeyboardShortcuts />
           <Toaster position="top-right" richColors closeButton />
           <Analytics />
           <SpeedInsights />

@@ -86,9 +86,34 @@
     @apply backdrop-blur-xl bg-white/90 dark:bg-gray-800/95 border border-white/30 dark:border-gray-600/50 shadow-2xl;
   }
 
-  /* Hover lift effect */
+  /* Hover lift effect - enhanced for desktop */
   .hover-lift {
-    @apply transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10;
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10;
+  }
+
+  @media (min-width: 1024px) {
+    .hover-lift {
+      @apply hover:-translate-y-2 hover:shadow-2xl;
+    }
+  }
+
+  /* Desktop-specific hover enhancements */
+  @media (min-width: 1024px) {
+    .hover-scale-desktop {
+      @apply transition-transform duration-200 hover:scale-[1.02];
+    }
+
+    .hover-glow {
+      @apply transition-all duration-300;
+    }
+
+    .hover-glow:hover {
+      box-shadow: 0 0 20px rgba(var(--primary), 0.3);
+    }
+
+    .hover-brightness {
+      @apply transition-all duration-200 hover:brightness-110;
+    }
   }
 
   /* Smooth transitions */
@@ -185,6 +210,18 @@
   @media (max-width: 640px) {
     html {
       font-size: 15px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    html {
+      font-size: 17px;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    html {
+      font-size: 18px;
     }
   }
 
