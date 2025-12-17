@@ -345,9 +345,9 @@ export default async function TopicPage({
             />
           </div>
 
-          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-extrabold mb-4 sm:mb-5 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent leading-tight break-words">{topic.title}</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-extrabold mb-6 sm:mb-7 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 dark:from-white dark:via-gray-100 dark:to-gray-300 bg-clip-text text-transparent leading-tight break-words">{topic.title}</h1>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 sm:p-5 bg-gradient-to-r from-gray-50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-900/30 rounded-xl border border-gray-200 dark:border-gray-700 mb-4 sm:mb-5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 bg-gradient-to-br from-blue-50/50 via-gray-50 to-purple-50/30 dark:from-blue-900/10 dark:via-gray-800/80 dark:to-purple-900/10 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm mb-6 sm:mb-8">
             <div className="flex items-center gap-4">
               {topic.author?.username ? (
                 <Link href={`/forum/user/${topic.author.username}`} className="flex-shrink-0 transition-transform hover:scale-105">
@@ -401,18 +401,18 @@ export default async function TopicPage({
               </div>
             </div>
             <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 whitespace-nowrap">
-                <MessageSquare className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                <span className="font-semibold text-gray-900 dark:text-white">{topic.reply_count}</span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">odgovora</span>
+              <div className="flex items-center gap-2.5 px-4 py-2 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl border border-blue-200 dark:border-blue-800 shadow-sm whitespace-nowrap">
+                <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                <span className="font-bold text-gray-900 dark:text-white">{topic.reply_count}</span>
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">odgovora</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 whitespace-nowrap">
-                <svg className="w-4 h-4 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center gap-2.5 px-4 py-2 bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl border border-purple-200 dark:border-purple-800 shadow-sm whitespace-nowrap">
+                <svg className="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
-                <span className="font-semibold text-gray-900 dark:text-white">{topic.view_count}</span>
-                <span className="text-xs text-gray-600 dark:text-gray-400">pregleda</span>
+                <span className="font-bold text-gray-900 dark:text-white">{topic.view_count}</span>
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">pregleda</span>
               </div>
             </div>
           </div>
@@ -430,7 +430,7 @@ export default async function TopicPage({
           <AdvancedAttachmentList attachments={topicAttachments || []} />
           
           {/* Topic Reactions */}
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="mt-6 pt-6 border-t-2 border-gray-200 dark:border-gray-700">
             <ReactionPicker
               topicId={topic.id}
               reactions={topicReactions || []}
