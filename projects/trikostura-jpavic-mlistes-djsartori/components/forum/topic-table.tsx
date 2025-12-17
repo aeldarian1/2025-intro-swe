@@ -171,13 +171,17 @@ export function TopicTable({ topics }: TopicTableProps) {
                 </div>
               </td>
               <td className="p-4 hidden lg:table-cell">
-                {topic.author && (
+                {topic.author?.username ? (
                   <Link
                     href={`/forum/user/${topic.author.username}`}
                     className="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors"
                   >
                     @{topic.author.username}
                   </Link>
+                ) : (
+                  <span className="text-gray-600 dark:text-gray-400">
+                    @nepoznato
+                  </span>
                 )}
               </td>
               <td className="p-4 text-center text-gray-900 dark:text-white font-semibold">

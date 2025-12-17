@@ -32,6 +32,12 @@ export const revalidate = 60;
 
 export default async function Page({ params }: PageProps) {
   const { username } = await params;
+  
+  // Validate username parameter
+  if (!username || username === 'undefined' || username === 'null') {
+    notFound();
+  }
+  
   const supabase = await createServerSupabaseClient();
 
   // Get current user
@@ -40,13 +46,14 @@ export default async function Page({ params }: PageProps) {
   } = await supabase.auth.getUser();
 
   // Get user profile
-  const { data: profile }: { data: any } = await supabase
+  const { data: profile, error }: { data: any; error: any } = await supabase
     .from('profiles')
     .select('*')
     .eq('username', username)
-    .single();
+    .maybeSingle();
 
-  if (!profile) {
+  if (!profile || error) {
+    console.error('Profile fetch error for username:', username, error);
     notFound();
   }
 

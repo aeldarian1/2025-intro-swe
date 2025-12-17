@@ -91,14 +91,23 @@ export function TopicListClient({ topics, totalCount, solvedCount, unsolvedCount
             className="p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 transition-all hover:shadow-lg"
           >
             <div className="flex items-start gap-3 sm:gap-4">
-              <Link href={`/forum/user/${topic.author?.username}`} className="flex-shrink-0">
+              {topic.author?.username ? (
+                <Link href={`/forum/user/${topic.author.username}`} className="flex-shrink-0">
+                  <Avatar
+                    src={topic.author?.avatar_url}
+                    alt={topic.author?.username || 'User'}
+                    username={topic.author?.username}
+                    size="md"
+                  />
+                </Link>
+              ) : (
                 <Avatar
                   src={topic.author?.avatar_url}
                   alt={topic.author?.username || 'User'}
                   username={topic.author?.username}
                   size="md"
                 />
-              </Link>
+              )}
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-2">
@@ -138,12 +147,18 @@ export function TopicListClient({ topics, totalCount, solvedCount, unsolvedCount
                 <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 flex-wrap">
                   <span>
                     od{' '}
-                    <Link
-                      href={`/forum/user/${topic.author?.username}`}
-                      className="font-semibold hover:text-blue-600 dark:hover:text-blue-400"
-                    >
-                      {topic.author?.username}
-                    </Link>
+                    {topic.author?.username ? (
+                      <Link
+                        href={`/forum/user/${topic.author.username}`}
+                        className="font-semibold hover:text-blue-600 dark:hover:text-blue-400"
+                      >
+                        {topic.author.username}
+                      </Link>
+                    ) : (
+                      <span className="font-semibold">
+                        Nepoznati korisnik
+                      </span>
+                    )}
                   </span>
                   <span className="flex items-center gap-1">
                     <MessageSquare className="w-4 h-4" />

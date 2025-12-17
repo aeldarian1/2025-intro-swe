@@ -405,22 +405,37 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between mb-2.5 sm:mb-3 gap-2 p-2.5 sm:p-3 bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-800/50 dark:to-transparent rounded-lg border-l-4 border-blue-500">
               <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                <Link href={`/forum/user/${reply.author?.username}`} className="flex-shrink-0 transition-transform hover:scale-110">
+                {reply.author?.username ? (
+                  <Link href={`/forum/user/${reply.author.username}`} className="flex-shrink-0 transition-transform hover:scale-110">
+                    <Avatar
+                      src={reply.author?.avatar_url}
+                      alt={reply.author?.username || 'User'}
+                      username={reply.author?.username}
+                      size="sm"
+                    />
+                  </Link>
+                ) : (
                   <Avatar
                     src={reply.author?.avatar_url}
                     alt={reply.author?.username || 'User'}
                     username={reply.author?.username}
                     size="sm"
                   />
-                </Link>
+                )}
                 <div className="flex flex-col gap-1 flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <Link
-                      href={`/forum/user/${reply.author?.username}`}
-                      className="font-bold text-sm sm:text-base text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                    >
-                      {reply.author?.username}
-                    </Link>
+                    {reply.author?.username ? (
+                      <Link
+                        href={`/forum/user/${reply.author.username}`}
+                        className="font-bold text-sm sm:text-base text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                      >
+                        {reply.author.username}
+                      </Link>
+                    ) : (
+                      <span className="font-bold text-sm sm:text-base text-gray-900 dark:text-white">
+                        Nepoznati korisnik
+                      </span>
+                    )}
                     {reply.author?.reputation > 0 && (
                       <span className="text-xs px-2 py-0.5 bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900 dark:to-amber-900 text-yellow-700 dark:text-yellow-300 rounded-full font-bold shadow-sm ring-1 ring-yellow-500/20">
                         ⭐ {reply.author.reputation}

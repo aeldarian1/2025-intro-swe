@@ -349,23 +349,38 @@ export default async function TopicPage({
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-900/30 rounded-xl border border-gray-200 dark:border-gray-700 mb-4 sm:mb-5">
             <div className="flex items-center gap-4">
-              <Link href={`/forum/user/${topic.author?.username}`} className="flex-shrink-0 transition-transform hover:scale-110">
+              {topic.author?.username ? (
+                <Link href={`/forum/user/${topic.author.username}`} className="flex-shrink-0 transition-transform hover:scale-110">
+                  <Avatar
+                    src={topic.author?.avatar_url}
+                    alt={topic.author?.username || 'User'}
+                    username={topic.author?.username}
+                    size="md"
+                  />
+                </Link>
+              ) : (
                 <Avatar
                   src={topic.author?.avatar_url}
                   alt={topic.author?.username || 'User'}
                   username={topic.author?.username}
                   size="md"
                 />
-              </Link>
+              )}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Autor:</span>
-                  <Link
-                    href={`/forum/user/${topic.author?.username}`}
-                    className="font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                  >
-                    {topic.author?.username}
-                  </Link>
+                  {topic.author?.username ? (
+                    <Link
+                      href={`/forum/user/${topic.author.username}`}
+                      className="font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                    >
+                      {topic.author.username}
+                    </Link>
+                  ) : (
+                    <span className="font-bold text-gray-900 dark:text-white">
+                      {topic.author?.username || 'Nepoznati korisnik'}
+                    </span>
+                  )}
                   {topic.author?.reputation > 0 && (
                     <span className="px-2 py-0.5 text-xs font-bold bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900 dark:to-amber-900 text-yellow-700 dark:text-yellow-300 rounded-full shadow-sm ring-1 ring-yellow-500/20">
                       ⭐ {topic.author.reputation}
