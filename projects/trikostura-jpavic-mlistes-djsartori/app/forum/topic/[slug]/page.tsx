@@ -386,14 +386,14 @@ export default async function TopicPage({
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-4 sm:gap-6">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                <MessageSquare className="w-4 h-4 text-blue-500" />
+            <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 whitespace-nowrap">
+                <MessageSquare className="w-4 h-4 text-blue-500 flex-shrink-0" />
                 <span className="font-semibold text-gray-900 dark:text-white">{topic.reply_count}</span>
                 <span className="text-xs text-gray-600 dark:text-gray-400">odgovora</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 whitespace-nowrap">
+                <svg className="w-4 h-4 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
