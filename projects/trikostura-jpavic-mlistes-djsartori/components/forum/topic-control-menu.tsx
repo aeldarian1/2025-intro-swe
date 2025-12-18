@@ -96,6 +96,8 @@ export function TopicControlMenu({ topic, isAuthor, isAdmin, categories = [] }: 
         variant="ghost"
         size="sm"
         onClick={() => setShowActions(!showActions)}
+        aria-label="Opcije teme"
+        aria-expanded={showActions}
       >
         <MoreVertical className="w-4 h-4" />
       </Button>
@@ -110,6 +112,7 @@ export function TopicControlMenu({ topic, isAuthor, isAdmin, categories = [] }: 
                   setShowActions(false);
                 }}
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                aria-label="Uredi temu"
               >
                 <Edit2 className="w-4 h-4" />
                 Uredi temu
@@ -123,6 +126,7 @@ export function TopicControlMenu({ topic, isAuthor, isAdmin, categories = [] }: 
                 }}
                 disabled={isProcessing}
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 text-blue-600"
+                aria-label={topic.is_pinned ? 'Otkvači temu' : 'Prikvači temu'}
               >
                 <Pin className="w-4 h-4" />
                 {topic.is_pinned ? 'Otkvači temu' : 'Prikvači temu'}
@@ -136,6 +140,7 @@ export function TopicControlMenu({ topic, isAuthor, isAdmin, categories = [] }: 
                 }}
                 disabled={isProcessing}
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 text-orange-600"
+                aria-label={topic.is_locked ? 'Otključaj temu' : 'Zaključaj temu'}
               >
                 {topic.is_locked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                 {topic.is_locked ? 'Otključaj temu' : 'Zaključaj temu'}

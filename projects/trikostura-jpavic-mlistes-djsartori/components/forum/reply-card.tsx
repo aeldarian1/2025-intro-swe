@@ -339,6 +339,7 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
                 !isLoggedIn ? 'cursor-not-allowed' : 'hover:scale-105'
               } ${upvoteAnimation}`}
               title={!isLoggedIn ? 'Prijavite se da biste glasali' : 'Sviđa mi se'}
+              aria-label={`Glasa za odgovor, trenutno ${upvotes} pozitivnih glasova`}
             >
               <ThumbsUp className={`w-4 h-4 mr-1 ${isVoting ? 'animate-pulse' : ''}`} />
               <span className="text-sm">{upvotes}</span>
@@ -357,6 +358,7 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
                 !isLoggedIn ? 'cursor-not-allowed' : 'hover:scale-105'
               } ${downvoteAnimation}`}
               title={!isLoggedIn ? 'Prijavite se da biste glasali' : 'Ne sviđa mi se'}
+              aria-label={`Glasa protiv odgovora, trenutno ${downvotes} negativnih glasova`}
             >
               <ThumbsDown className={`w-4 h-4 mr-1 ${isVoting ? 'animate-pulse' : ''}`} />
               <span className="text-sm">{downvotes}</span>
@@ -378,6 +380,7 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
                 !isLoggedIn ? 'cursor-not-allowed opacity-40' : ''
               } ${upvoteAnimation}`}
               title={!isLoggedIn ? 'Prijavite se da biste glasali' : 'Sviđa mi se'}
+              aria-label={`Glasa za odgovor, trenutno ${upvotes} pozitivnih glasova`}
             >
               <ThumbsUp className={`w-4 h-4 ${isVoting ? 'animate-pulse' : ''}`} />
             </Button>
@@ -397,6 +400,7 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
                 !isLoggedIn ? 'cursor-not-allowed opacity-40' : ''
               } ${downvoteAnimation}`}
               title={!isLoggedIn ? 'Prijavite se da biste glasali' : 'Ne sviđa mi se'}
+              aria-label={`Glasa protiv odgovora, trenutno ${downvotes} negativnih glasova`}
             >
               <ThumbsDown className={`w-4 h-4 ${isVoting ? 'animate-pulse' : ''}`} />
             </Button>
