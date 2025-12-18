@@ -19,6 +19,7 @@ import { PollCreator } from '@/components/forum/poll-creator';
 import { TypingIndicator } from '@/components/forum/typing-indicator';
 import { getPollDetails } from '@/app/forum/polls/actions';
 import { headers } from 'next/headers';
+import { BackToTop } from '@/components/ui/back-to-top';
 
 // Revalidate every 2 minutes for better cache performance
 export const revalidate = 120;
@@ -464,6 +465,7 @@ export default async function TopicPage({
         </Card>
       )}
       </div>
+      <BackToTop />
     </div>
   );
 }

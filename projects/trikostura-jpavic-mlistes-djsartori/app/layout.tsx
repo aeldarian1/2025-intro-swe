@@ -65,6 +65,13 @@ export default function RootLayout({
   return (
     <html lang="hr" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
+        {/* Skip link for accessibility */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:left-4 focus:top-4 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-white focus:text-black focus:shadow-lg"
+        >
+          Preskoči na sadržaj
+        </a>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -72,7 +79,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <PerformanceMonitor />
-          {children}
+          <div id="main-content">{children}</div>
           <InstallPrompt />
           <KeyboardShortcuts />
           <Toaster position="top-right" richColors closeButton />

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X, Home, Search, Settings, User, LogOut, Plus, Users, Bookmark, Mail, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
@@ -19,6 +20,7 @@ export function MobileNav({ user, profile }: MobileNavProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number>(0);
   const currentXRef = useRef<number>(0);
+  const pathname = usePathname();
 
   const closeMenu = () => setIsOpen(false);
 
@@ -68,9 +70,9 @@ export function MobileNav({ user, profile }: MobileNavProps) {
       {/* Hamburger Button */}
       <Button
         variant="ghost"
-        size="sm"
+        size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2"
+        className="p-2 rounded-full"
         aria-label="Toggle menu"
       >
         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -134,7 +136,7 @@ export function MobileNav({ user, profile }: MobileNavProps) {
                     <Link
                       href="/forum"
                       onClick={closeMenu}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${pathname?.startsWith('/forum') && !pathname.includes('/users') && !pathname.includes('/leaderboard') && !pathname.includes('/search') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'}`}
                     >
                       <Home className="w-5 h-5" />
                       Forum
@@ -143,7 +145,7 @@ export function MobileNav({ user, profile }: MobileNavProps) {
                     <Link
                       href="/forum/users"
                       onClick={closeMenu}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${pathname?.startsWith('/forum/users') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'}`}
                     >
                       <Users className="w-5 h-5" />
                       Korisnici
@@ -152,7 +154,7 @@ export function MobileNav({ user, profile }: MobileNavProps) {
                     <Link
                       href="/forum/leaderboard"
                       onClick={closeMenu}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${pathname?.startsWith('/forum/leaderboard') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'}`}
                     >
                       <Trophy className="w-5 h-5" />
                       Ljestvica
@@ -161,7 +163,7 @@ export function MobileNav({ user, profile }: MobileNavProps) {
                     <Link
                       href="/forum/search"
                       onClick={closeMenu}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${pathname?.startsWith('/forum/search') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'}`}
                     >
                       <Search className="w-5 h-5" />
                       Pretraži
