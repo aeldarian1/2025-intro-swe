@@ -85,6 +85,13 @@ export function TopicListClient({ topics, totalCount, solvedCount, unsolvedCount
 
       {/* Topic List */}
       <div className="space-y-4">
+        {filteredTopics.length === 0 && (
+          <div className="p-6 sm:p-8 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-center text-gray-600 dark:text-gray-300">
+            <p className="text-lg font-semibold">Nema tema za prikaz</p>
+            <p className="text-sm mt-1">Promijeni filter ili dodaj novu temu.</p>
+          </div>
+        )}
+
         {filteredTopics.map((topic) => (
           <div
             key={topic.id}

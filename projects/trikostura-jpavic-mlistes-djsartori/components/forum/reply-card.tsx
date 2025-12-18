@@ -403,7 +403,7 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between mb-2.5 sm:mb-3 gap-2 p-2.5 sm:p-3 bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-800/50 dark:to-transparent rounded-lg border-l-4 border-blue-500">
+            <div className="flex items-start justify-between mb-3 sm:mb-4 gap-2 p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-800/50 dark:to-transparent rounded-xl border-l-4 border-blue-500">
               <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                 {reply.author?.username ? (
                   <Link href={`/forum/user/${reply.author.username}`} className="flex-shrink-0 transition-transform hover:scale-110">
@@ -422,7 +422,7 @@ export const ReplyCard = memo(function ReplyCard({ reply, userVote, isLoggedIn, 
                     size="sm"
                   />
                 )}
-                <div className="flex flex-col gap-1 flex-1 min-w-0">
+                <div className="flex flex-col gap-1.5 flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     {reply.author?.username ? (
                       <Link
