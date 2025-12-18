@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { EnhancedMarkdownEditor } from '@/components/forum/new/enhanced-markdown-editor';
 import { EnhancedFileUpload } from '@/components/forum/new/enhanced-file-upload';
 import { AutoSaveIndicator, SaveStatus } from '@/components/forum/new/auto-save-indicator';
-import { ArrowLeft, Send, Save, AlertCircle, Sparkles, Eye, Edit3, Lightbulb, Zap, X } from 'lucide-react';
+import { ArrowLeft, Send, Save, AlertCircle, Sparkles, Eye, Edit3, Lightbulb, Zap, X, AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { uploadAttachment, saveAttachmentMetadata } from '@/lib/attachments';
 import { generateSlug } from '@/lib/utils';
@@ -26,6 +26,7 @@ import { MarkdownRenderer } from '@/components/forum/markdown-renderer';
 const MAX_TITLE_LENGTH = 200;
 const MAX_CONTENT_LENGTH = 10000;
 const AUTOSAVE_DELAY = 3000; // 3 seconds
+type NoticeKind = 'info' | 'success' | 'warning' | 'error';
 
 export function CreateTopicPage({ categories, tags, initialDraft }: any) {
   const router = useRouter();
@@ -41,6 +42,7 @@ export function CreateTopicPage({ categories, tags, initialDraft }: any) {
   const [error, setError] = useState('');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [showTips, setShowTips] = useState(true);
+  const [statusNotice, setStatusNotice] = useState<{ type: NoticeKind; message: string } | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const { triggerAnimation: triggerSubmitAnimation, animationClasses: submitAnimation } = useButtonAnimation();
   const { triggerAnimation: triggerSaveAnimation, animationClasses: saveAnimation } = useButtonAnimation();
@@ -158,22 +160,29 @@ export function CreateTopicPage({ categories, tags, initialDraft }: any) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setStatusNotice(null);
 
     if (!title.trim()) {
-      setError('Naslov je obavezan');
-      toast.error('Naslov je obavezan');
+      const message = 'Naslov je obavezan';
+      setError(message);
+      setStatusNotice({ type: 'error', message });
+      toast.error(message);
       return;
     }
 
     if (!content.trim()) {
-      setError('Sadržaj je obavezan');
-      toast.error('Sadržaj je obavezan');
+      const message = 'Sadržaj je obavezan';
+      setError(message);
+      setStatusNotice({ type: 'error', message });
+      toast.error(message);
       return;
     }
 
     if (!categoryId) {
-      setError('Molimo odaberite kategoriju');
-      toast.error('Molimo odaberite kategoriju');
+      const message = 'Molimo odaberite kategoriju';
+      setError(message);
+      setStatusNotice({ type: 'error', message });
+      toast.error(message);
       return;
     }
 
@@ -193,14 +202,18 @@ export function CreateTopicPage({ categories, tags, initialDraft }: any) {
       // Spam detection - check title and content
       const titleSpamCheck = detectSpam(title.trim());
       if (titleSpamCheck.isSpam) {
-        toast.error(`Naslov je označen kao spam: ${titleSpamCheck.reason}`, { id: loadingToast });
+        const message = `Naslov je označen kao spam: ${titleSpamCheck.reason}`;
+        toast.error(message, { id: loadingToast });
+        setStatusNotice({ type: 'error', message });
         setIsSubmitting(false);
         return;
       }
 
       const contentSpamCheck = detectSpam(content.trim());
       if (contentSpamCheck.isSpam) {
-        toast.error(`Sadržaj je označen kao spam: ${contentSpamCheck.reason}`, { id: loadingToast });
+        const message = `Sadržaj je označen kao spam: ${contentSpamCheck.reason}`;
+        toast.error(message, { id: loadingToast });
+        setStatusNotice({ type: 'error', message });
         setIsSubmitting(false);
         return;
       }
@@ -226,7 +239,9 @@ export function CreateTopicPage({ categories, tags, initialDraft }: any) {
         });
 
         if (duplicateCheck.isSpam) {
-          toast.error(`${duplicateCheck.reason}. Molimo pričekajte prije ponovnog objavljivanja.`, { id: loadingToast });
+          const message = `${duplicateCheck.reason}. Molimo pričekajte prije ponovnog objavljivanja.`;
+          toast.error(message, { id: loadingToast });
+          setStatusNotice({ type: 'warning', message });
           setIsSubmitting(false);
           return;
         }
@@ -239,7 +254,9 @@ export function CreateTopicPage({ categories, tags, initialDraft }: any) {
         });
 
         if (rateCheck.isSpam) {
-          toast.error(`${rateCheck.reason}. Molimo usporite.`, { id: loadingToast });
+          const message = `${rateCheck.reason}. Molimo usporite.`;
+          toast.error(message, { id: loadingToast });
+          setStatusNotice({ type: 'warning', message });
           setIsSubmitting(false);
           return;
         }
@@ -254,7 +271,9 @@ export function CreateTopicPage({ categories, tags, initialDraft }: any) {
       });
 
       if (!moderationResult.approved) {
-        toast.error(moderationResult.reason || 'Sadržaj sadrži neprimjeren jezik', { id: loadingToast });
+        const message = moderationResult.reason || 'Sadržaj sadrži neprimjeren jezik';
+        toast.error(message, { id: loadingToast });
+        setStatusNotice({ type: 'error', message });
         setIsSubmitting(false);
         return;
       }
@@ -347,13 +366,30 @@ export function CreateTopicPage({ categories, tags, initialDraft }: any) {
 
       triggerSubmitAnimation();
       toast.success('Tema uspješno objavljena!', { id: loadingToast });
+      setStatusNotice({ type: 'success', message: 'Tema objavljena! Preusmjeravam...' });
       router.push(`/forum/topic/${topic.slug}`);
     } catch (err: any) {
       console.error('Error creating topic:', err);
-      setError(err.message || 'Došlo je do greške');
+      const message = err.message || 'Došlo je do greške';
+      setError(message);
+      setStatusNotice({ type: 'error', message });
       toast.error(err.message || 'Došlo je do greške pri objavi teme', { id: loadingToast });
       setIsSubmitting(false);
     }
+  };
+
+  const noticeStyles: Record<NoticeKind, string> = {
+    info: 'border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-900/40 dark:bg-blue-900/20 dark:text-blue-100',
+    success: 'border-green-200 bg-green-50 text-green-900 dark:border-green-900/40 dark:bg-green-900/20 dark:text-green-100',
+    warning: 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-100',
+    error: 'border-red-200 bg-red-50 text-red-900 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-100',
+  };
+
+  const renderNoticeIcon = (type: NoticeKind) => {
+    if (type === 'success') return <CheckCircle2 className="w-4 h-4 mt-0.5" />;
+    if (type === 'warning') return <AlertTriangle className="w-4 h-4 mt-0.5" />;
+    if (type === 'error') return <AlertTriangle className="w-4 h-4 mt-0.5" />;
+    return <Info className="w-4 h-4 mt-0.5" />;
   };
 
   const selectedCategory = categories.find((c: any) => c.id === categoryId);
@@ -455,11 +491,19 @@ Tko bi imao koristi od ovog resursa...`,
         </div>
       </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="mb-6 flex items-start gap-2 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+      {/* Status Notice */}
+      {statusNotice && (
+        <div className={`mb-6 flex items-start gap-3 text-sm rounded-lg border p-4 ${noticeStyles[statusNotice.type]}`}>
+          {renderNoticeIcon(statusNotice.type)}
+          <p className="flex-1 leading-snug">{statusNotice.message}</p>
+          <button
+            type="button"
+            onClick={() => setStatusNotice(null)}
+            className="text-inherit hover:opacity-70"
+            aria-label="Zatvori obavijest"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
