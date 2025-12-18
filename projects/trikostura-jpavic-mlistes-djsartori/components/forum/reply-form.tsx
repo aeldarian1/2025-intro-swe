@@ -13,7 +13,7 @@ import { checkAndAwardAchievements } from '@/app/forum/achievements/actions';
 import { moderateContent } from '@/lib/content-moderation';
 import { useTypingIndicator } from '@/components/forum/typing-indicator';
 import { toast } from 'sonner';
-import { Send, Loader2, Smile, Eye, Edit3, Lightbulb, X, Zap, Quote } from 'lucide-react';
+import { Send, Loader2, Smile, Eye, Edit3, Lightbulb, X, Zap, Quote, AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
 import { useButtonAnimation } from '@/hooks/use-button-animation';
 import { MarkdownRenderer } from '@/components/forum/markdown-renderer';
 
@@ -26,6 +26,7 @@ interface ReplyFormProps {
 }
 
 const MAX_CONTENT_LENGTH = 10000;
+type NoticeKind = 'info' | 'success' | 'warning' | 'error';
 
 // Common emojis for quick access
 const QUICK_EMOJIS = ['👍', '👎', '😊', '😂', '❤️', '🎉', '🤔', '👏', '🔥', '💯'];
@@ -35,16 +36,21 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [showTips, setShowTips] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string>();
+  const [statusNotice, setStatusNotice] = useState<{ type: NoticeKind; message: string } | null>(null);
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const initialContentRef = useRef(content);
+  const lastSavedContentRef = useRef(content);
   const { triggerAnimation, animationClasses } = useButtonAnimation();
+  const draftKey = useMemo(() => `reply-draft-${topicId}`, [topicId]);
+  const draftSavedAtKey = useMemo(() => `${draftKey}-savedAt`, [draftKey]);
   
   // Typing indicator hook
   const { broadcastTyping, stopTyping } = useTypingIndicator(topicId, currentUserId);
@@ -56,6 +62,41 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
       setCurrentUserId(data.user?.id);
     });
   }, []);
+
+  // Restore draft from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem(draftKey);
+    const savedAt = localStorage.getItem(draftSavedAtKey);
+
+    if (stored && stored.trim()) {
+      setContent(stored);
+      initialContentRef.current = stored;
+      lastSavedContentRef.current = stored;
+      setLastSavedAt(savedAt ? new Date(savedAt) : new Date());
+      setStatusNotice({ type: 'info', message: 'Vratili smo tvoj nedavno spremljeni nacrt odgovora.' });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftKey, draftSavedAtKey]);
+
+  // Autosave draft every 8s when there are unsaved changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (hasUnsavedChanges && content.trim()) {
+        const savedAt = new Date();
+        localStorage.setItem(draftKey, content);
+        localStorage.setItem(draftSavedAtKey, savedAt.toISOString());
+        lastSavedContentRef.current = content;
+        setLastSavedAt(savedAt);
+
+        // If only text changed and no files are pending, mark as saved
+        if (selectedFiles.length === 0) {
+          setHasUnsavedChanges(false);
+        }
+      }
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, [hasUnsavedChanges, content, draftKey, draftSavedAtKey, selectedFiles.length]);
 
   // Broadcast typing when content changes
   useEffect(() => {
@@ -83,8 +124,21 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
 
   // Track unsaved changes
   useEffect(() => {
-    setHasUnsavedChanges(content.trim() !== initialContentRef.current.trim() || selectedFiles.length > 0);
+    const baseline = lastSavedContentRef.current.trim();
+    const trimmed = content.trim();
+    setHasUnsavedChanges(trimmed !== baseline || selectedFiles.length > 0);
   }, [content, selectedFiles]);
+
+  // Clear draft storage when form is empty
+  useEffect(() => {
+    if (!content.trim() && selectedFiles.length === 0) {
+      localStorage.removeItem(draftKey);
+      localStorage.removeItem(draftSavedAtKey);
+      lastSavedContentRef.current = '';
+      setLastSavedAt(null);
+      setHasUnsavedChanges(false);
+    }
+  }, [content, selectedFiles.length, draftKey, draftSavedAtKey]);
 
   // Warn before leaving with unsaved changes
   useEffect(() => {
@@ -115,15 +169,21 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
 
   const validateContent = useCallback(() => {
     if (!content.trim()) {
-      toast.error('Sadržaj odgovora ne može biti prazan');
+      const message = 'Sadržaj odgovora ne može biti prazan';
+      toast.error(message);
+      setStatusNotice({ type: 'error', message });
+      textareaRef.current?.focus();
       return false;
     }
 
     if (content.length > MAX_CONTENT_LENGTH) {
-      toast.error(`Sadržaj ne smije biti duži od ${MAX_CONTENT_LENGTH} znakova`);
+      const message = `Sadržaj ne smije biti duži od ${MAX_CONTENT_LENGTH} znakova`;
+      toast.error(message);
+      setStatusNotice({ type: 'error', message });
       return false;
     }
 
+    setStatusNotice(null);
     return true;
   }, [content]);
 
@@ -148,6 +208,8 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    setStatusNotice(null);
+
     if (!validateContent()) {
       return;
     }
@@ -168,7 +230,9 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
       } = await supabase.auth.getUser();
 
       if (!user) {
-        toast.error('Morate biti prijavljeni', { id: toastId });
+        const message = 'Morate biti prijavljeni';
+        toast.error(message, { id: toastId });
+        setStatusNotice({ type: 'error', message });
         setIsSubmitting(false);
         return;
       }
@@ -176,7 +240,9 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
       // Spam detection - check content
       const spamCheck = detectSpam(content.trim());
       if (spamCheck.isSpam) {
-        toast.error(`Sadržaj je označen kao spam: ${spamCheck.reason}`, { id: toastId });
+        const message = `Sadržaj je označen kao spam: ${spamCheck.reason}`;
+        toast.error(message, { id: toastId });
+        setStatusNotice({ type: 'error', message });
         setIsSubmitting(false);
         return;
       }
@@ -199,7 +265,9 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
         });
 
         if (duplicateCheck.isSpam) {
-          toast.error(`${duplicateCheck.reason}. Molimo pričekajte prije ponovnog objavljivanja.`, { id: toastId });
+          const message = `${duplicateCheck.reason}. Molimo pričekajte prije ponovnog objavljivanja.`;
+          toast.error(message, { id: toastId });
+          setStatusNotice({ type: 'warning', message });
           setIsSubmitting(false);
           return;
         }
@@ -212,7 +280,9 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
         });
 
         if (rateCheck.isSpam) {
-          toast.error(`${rateCheck.reason}. Molimo usporite.`, { id: toastId });
+          const message = `${rateCheck.reason}. Molimo usporite.`;
+          toast.error(message, { id: toastId });
+          setStatusNotice({ type: 'warning', message });
           setIsSubmitting(false);
           return;
         }
@@ -226,7 +296,9 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
       });
 
       if (!moderationResult.approved) {
-        toast.error(moderationResult.reason || 'Sadržaj sadrži neprimjeren jezik', { id: toastId });
+        const message = moderationResult.reason || 'Sadržaj sadrži neprimjeren jezik';
+        toast.error(message, { id: toastId });
+        setStatusNotice({ type: 'error', message });
         setIsSubmitting(false);
         return;
       }
@@ -301,6 +373,7 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
 
       triggerAnimation();
       toast.success('Odgovor uspješno objavljen!', { id: toastId });
+      setStatusNotice({ type: 'success', message: 'Odgovor objavljen i nacrt očišćen.' });
 
       // Reset form
       setContent('');
@@ -309,6 +382,10 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
       setIsSubmitting(false);
       setUploadProgress(0);
       initialContentRef.current = '';
+      lastSavedContentRef.current = '';
+      setLastSavedAt(null);
+      localStorage.removeItem(draftKey);
+      localStorage.removeItem(draftSavedAtKey);
 
       // Callback or refresh
       if (onSuccess) {
@@ -319,11 +396,17 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
 
     } catch (error: any) {
       console.error('Reply submission error:', error);
-      toast.error(error?.message || 'Greška pri objavljivanju odgovora', { id: toastId });
+      const message = error?.message || 'Greška pri objavljivanju odgovora';
+      toast.error(message, { id: toastId });
+      setStatusNotice({ type: 'error', message });
 
       // Save content to localStorage for recovery
       if (content.trim()) {
-        localStorage.setItem(`reply-draft-${topicId}`, content);
+        const savedAt = new Date();
+        localStorage.setItem(draftKey, content);
+        localStorage.setItem(draftSavedAtKey, savedAt.toISOString());
+        lastSavedContentRef.current = content;
+        setLastSavedAt(savedAt);
         toast.info('Sadržaj spremljen u međuspremnik');
       }
 
@@ -355,6 +438,20 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
       template: '## Rješenje\n\nNašao sam rješenje! Evo što je uspjelo:\n\n1. \n2. \n\nNadam se da će ovo pomoći i drugima s istim problemom!',
     },
   ];
+
+  const noticeStyles: Record<NoticeKind, string> = {
+    info: 'border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-900/40 dark:bg-blue-900/20 dark:text-blue-100',
+    success: 'border-green-200 bg-green-50 text-green-900 dark:border-green-900/40 dark:bg-green-900/20 dark:text-green-100',
+    warning: 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-100',
+    error: 'border-red-200 bg-red-50 text-red-900 dark:border-red-900/40 dark:bg-red-900/20 dark:text-red-100',
+  };
+
+  const renderNoticeIcon = (type: NoticeKind) => {
+    if (type === 'success') return <CheckCircle2 className="w-4 h-4 mt-0.5" />;
+    if (type === 'warning') return <AlertTriangle className="w-4 h-4 mt-0.5" />;
+    if (type === 'error') return <AlertTriangle className="w-4 h-4 mt-0.5" />;
+    return <Info className="w-4 h-4 mt-0.5" />;
+  };
 
   const handleClearQuote = () => {
     setContent('');
@@ -547,12 +644,17 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
         )}
 
         {/* Character Counter */}
-        <div className="flex justify-between items-center text-sm">
+        <div className="flex justify-between items-center text-sm flex-wrap gap-2">
           <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
             <span>Markdown podržan</span>
             {hasUnsavedChanges && (
               <span className="text-orange-600 dark:text-orange-400">
                 • Nespremljene promjene
+              </span>
+            )}
+            {lastSavedAt && (
+              <span className="text-gray-500 dark:text-gray-400 text-xs">
+                Auto-spremljeno u {lastSavedAt.toLocaleTimeString('hr-HR', { hour: '2-digit', minute: '2-digit' })}
               </span>
             )}
           </div>
@@ -561,6 +663,21 @@ export function ReplyForm({ topicId, quotedText, quotedAuthor, onSuccess, onClea
           </span>
         </div>
       </div>
+
+      {statusNotice && (
+        <div className={`flex items-start gap-3 text-sm rounded-md border p-3 ${noticeStyles[statusNotice.type]}`}>
+          {renderNoticeIcon(statusNotice.type)}
+          <p className="flex-1 leading-snug">{statusNotice.message}</p>
+          <button
+            type="button"
+            onClick={() => setStatusNotice(null)}
+            className="text-inherit hover:opacity-70"
+            aria-label="Zatvori obavijest"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       <AdvancedFileUpload onFilesChange={setSelectedFiles} maxFiles={3} />
 

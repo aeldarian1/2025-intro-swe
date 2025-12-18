@@ -83,12 +83,6 @@ export async function Navbar() {
               >
                 Ljestvica
               </NavLink>
-              <NavLink
-                href="/forum/search"
-                className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
-              >
-                Pretraži
-              </NavLink>
               {profile?.role === 'admin' && (
                 <NavLink
                   href="/admin"
